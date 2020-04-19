@@ -28,7 +28,13 @@ sitemaps = dict()
 urlpatterns = [
     url(r"^jet/", include("jet.urls", "jet")),
     url(r"^jet/dashboard/", include("jet.dashboard.urls", "jet-dashboard")),
-    url("", admin.site.urls),
+    url("^admin/", admin.site.urls),
+
+    url("^project/", include("apps.project.urls")),
+    url("^social/", include("apps.social.urls")),
+    url("^stream/", include("apps.stream.urls")),
+
+    url("^user/", include("apps.user.urls")),
 ]
 
 # if settings.ADMIN_ENABLED:

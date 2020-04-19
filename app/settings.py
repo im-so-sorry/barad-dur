@@ -94,6 +94,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",
+    "apps.core.middleware.ProcessSocialUserMiddleware",
+    "apps.core.middleware.InternalTokenMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -8,6 +10,7 @@ from django.utils import timezone
 
 from django.utils.translation import gettext_lazy as _
 
+from apps.core.utils.choices import Choices
 from apps.user.utils import get_token, get_user_token
 
 
@@ -67,3 +70,37 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     def get_short_name(self):
         return self.email
+
+
+class SocialUserManager(models.Manager):
+    def create_user(self, username: str, service: str, user: User = None, sync_token: Optional[str] = None):
+        if not user:
+            other_user = SocialUser.objects.filter(sync_token=sync_token, user__isnull=False).first()
+            if other_user:
+                user = other_user.user
+            else:
+                user, _ = User.objects.get_or_create(username=f"{service}_{username}")
+
+        social_user = SocialUser.objects.create(username=username, service=service, user=user, sync_token=sync_token)
+
+        return social_user
+
+    def get_or_create_user(self, username: str, service: str, sync_token: Optional[str] = None):
+        social_user = SocialUser.objects.filter(username=username, service=service).first()
+        return social_user or self.create_user(username, service, sync_token=sync_token)
+
+
+class SocialUser(models.Model):
+    SERVICES = Choices(
+        ("vk", "vk.com"),
+        ("tg", "telegram.com"),
+        ("service", "service")
+    )
+
+    username = models.CharField(max_length=256, db_index=True, unique=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sync_token = models.CharField(max_length=64, null=True, blank=True)
+    service = models.CharField(max_length=256, choices=SERVICES)
+
+    objects = SocialUserManager()
