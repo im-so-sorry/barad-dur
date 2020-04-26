@@ -55,6 +55,8 @@ class User(PermissionsMixin, AbstractBaseUser):
     is_active = models.BooleanField(default=True, verbose_name=_("Active"))
     date_joined = models.DateTimeField(default=timezone.now, editable=False, verbose_name=_("Date joined"))
 
+    is_streaming = models.BooleanField(default=True)
+
     USERNAME_FIELD = "username"
 
     objects = UserManager()

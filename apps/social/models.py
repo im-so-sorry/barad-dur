@@ -7,7 +7,7 @@ from apps.core.utils.choices import Choices
 class NotificationService(TimeStampedModel):
     SERVICES = Choices(("vk", "vk.com"), ("telegram", "telegram.com"), ("email", "email"),)
 
-    user = models.ForeignKey("user.User", on_delete=models.CASCADE)
+    user = models.ForeignKey("user.User", on_delete=models.CASCADE, related_name="notifications")
 
     service = models.CharField(max_length=64, choices=SERVICES)
     value = models.CharField(max_length=256, blank=True, null=True)

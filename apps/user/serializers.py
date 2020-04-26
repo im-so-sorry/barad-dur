@@ -11,6 +11,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SocialUserSerializer(serializers.ModelSerializer):
+    is_streaming = serializers.SerializerMethodField(method_name="resolve_is_streaming")
+
     class Meta:
         model = SocialUser
-        fields = ("id", "username", "user", "sync_token", "service")
+        fields = ("id", "username", "user", "sync_token", "service", "is_streaming")
+
+    def resolve_is_streaming(self, instance, *args, **kwargs):
+        return instance.user.is_streaming

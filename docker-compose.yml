@@ -1,6 +1,28 @@
 version: '3'
 
 services:
+  web:
+    build: .
+    env_file: .env
+    networks:
+      - barad-dur
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps:/app/apps/
+      - ./app:/app/app/
+    command: uwsgi uwsgi.ini
+
+  event_dispatcher:
+    build: .
+    env_file: .env
+    networks:
+      - barad-dur
+    volumes:
+      - ./apps:/app/apps/
+      - ./app:/app/app/
+    command: python manage.py event_dispatcher
+
   postgres:
     image: postgres
     env_file: .env

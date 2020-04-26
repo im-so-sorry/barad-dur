@@ -49,7 +49,7 @@ if not os.path.exists(FILES_DIR):
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "[]")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ["*"])
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -84,7 +84,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
-    "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -93,7 +92,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    "django.middleware.cache.FetchFromCacheMiddleware",
     "apps.core.middleware.ProcessSocialUserMiddleware",
     "apps.core.middleware.InternalTokenMiddleware",
 ]
@@ -136,15 +134,14 @@ CACHES = {
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-
+print(env("DATABASE_CONNECTION"))
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get(
+        default=env(
             "DATABASE_CONNECTION",
-            "postgres://marking:marking@localhost:5432/{SERVICE_PREFIX}".format(
-                SERVICE_PREFIX=SERVICE_PREFIX
-            ),
+            "postgres://postgres:postgres@postgres:5432/postgres",
         ),
+        engine="django.db.backends.postgresql_psycopg2",
         conn_max_age=600,
     )
 }
@@ -188,7 +185,7 @@ LANGUAGES = (
     ("en", _("English")),
 )
 
-PARLER_LANGUAGES = {1: ({"code": "ru",}, {"code": "en",},)}
+PARLER_LANGUAGES = {1: ({"code": "ru", }, {"code": "en", },)}
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
@@ -239,3 +236,9 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 UUID_NAMESPACE = uuid.UUID(os.environ.get("UUID_NAMESPACE", "0527cd24-8b69-4c5a-86f8-6842d9388cdf"))
+
+KAFKA_HOSTS = env("KAFKA_HOSTS", "kafka:9092")
+KAFKA_GROUP_ID = env("KAFKA_GROUP_ID", "stream_dispatcher")
+KAFKA_STREAM_TOPICS = env.list("KAFKA_STREAM_TOPICS", ["vk_stream"])
+KAFKA_AUTO_OFFSET_RESET = env("KAFKA_AUTO_OFFSET_RESET", 'earliest')
+KAFKA_ENABLE_AUTO_COMMIT = env.bool("KAFKA_ENABLE_AUTO_COMMIT", True)

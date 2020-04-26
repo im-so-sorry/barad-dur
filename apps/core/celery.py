@@ -5,7 +5,7 @@ from app import settings
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 
-app = Celery("ftp_client")
+app = Celery("celery_client")
 
 app.config_from_object("django.conf:settings", namespace="CELERY")
 

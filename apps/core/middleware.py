@@ -10,7 +10,7 @@ def get_user(username, service) -> Optional['SocialUser']:
 
     user = None
     if username and service:
-        user, _ = SocialUser.objects.get_or_create_user(username=username, service=service)
+        user = SocialUser.objects.get_or_create_user(username=username, service=service)
     return user
 
 

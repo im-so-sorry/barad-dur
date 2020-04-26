@@ -12,6 +12,6 @@ RUN apk update \
 ADD . /usr/src/app
 RUN pip install -r requirements.txt
 
-RUN python manage.py collectstatic
+RUN python manage.py collectstatic --noinput
 
-CMD ["uwsgi", "--socket=0.0.0.0:8000", "--protocol=http", "--lazy", "--module=app.wsgi:application", "--env", "DJANGO_SETTINGS_MODULE=app.settings", "--enable-threads", "--threads=5", "--static-map=/printer/static=/usr/src/app/static"]
+CMD ["uwsgi", "uwsgi.ini"]

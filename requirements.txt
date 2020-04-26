@@ -24,3 +24,4 @@ flower==0.9.4
 django-jet==1.0.8
 google-api-python-client==1.8.0
 black==19.10b0
+kafka-python==1.4.7
