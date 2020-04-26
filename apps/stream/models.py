@@ -1,8 +1,11 @@
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 from apps.core.models import TimeStampedModel
 from apps.core.utils.choices import Choices
+from apps.stream import tasks
 
 SERVICES = Choices(("vk", "vk.com"), ("twitter", "twitter.com"), )
 
@@ -33,7 +36,6 @@ class Rule(TimeStampedModel):
 
 
 class Event(TimeStampedModel):
-
     service = models.CharField(max_length=64, null=True, choices=SERVICES)
 
     event_type = models.CharField(max_length=64, null=True)
@@ -43,4 +45,9 @@ class Event(TimeStampedModel):
     payload = JSONField(default=dict, null=True, blank=True, verbose_name="Additional data")
 
     class Meta:
-        ordering = ("created", )
+        ordering = ("created",)
+
+
+@receiver(post_delete, sender=Rule)
+def create_add_rule(sender, instance, *args, **kwargs):
+    tasks.remove_rule(instance.key)

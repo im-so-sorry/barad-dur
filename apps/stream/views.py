@@ -11,6 +11,7 @@ from apps.stream.filters import EventFilter
 from apps.stream.models import Rule, Event
 from apps.stream.serializers import StreamSerializer, RuleSerializer, EventSerializer, FullEventSerializer, \
     StatsSerializer
+from apps.stream import tasks
 
 
 class StreamModelView(viewsets.ModelViewSet):
@@ -36,6 +37,10 @@ class RuleModelView(viewsets.ModelViewSet):
 
         qs = qs.filter(user=social_user.user)
         return qs
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        tasks.add_rule(instance.key, instance.value)
 
     @action(methods=['delete'], detail=False, url_path='remove_rule', url_name='remove_rule')
     def remove_rule(self, request, *args, **kwargs):

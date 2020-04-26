@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.utils.choices import Choices
+from apps.social.models import NotificationService
 from apps.user.utils import get_token, get_user_token
 
 
@@ -84,7 +85,7 @@ class SocialUserManager(models.Manager):
                 user, _ = User.objects.get_or_create(username=f"{service}_{username}")
 
         social_user = SocialUser.objects.create(username=username, service=service, user=user, sync_token=sync_token)
-
+        NotificationService.objects.get_or_create(user=user, service=service, value=username, is_active=True)
         return social_user
 
     def get_or_create_user(self, username: str, service: str, sync_token: Optional[str] = None):
