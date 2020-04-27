@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as ParentUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from apps.user.models import User
+from apps.user.models import User, SocialUser
 
 
 @admin.register(User)
@@ -13,7 +13,12 @@ class UserAdmin(ParentUserAdmin):
         (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
         (
             _("Permissions"),
-            {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"),},
+            {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions"), },
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
+
+
+@admin.register(SocialUser)
+class SocialUserAdmin(admin.ModelAdmin):
+    pass
