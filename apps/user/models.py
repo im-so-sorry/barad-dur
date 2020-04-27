@@ -78,11 +78,7 @@ class User(PermissionsMixin, AbstractBaseUser):
 class SocialUserManager(models.Manager):
     def create_user(self, username: str, service: str, user: User = None, sync_token: Optional[str] = None):
         if not user:
-            other_user = SocialUser.objects.filter(sync_token=sync_token, user__isnull=False).first()
-            if other_user:
-                user = other_user.user
-            else:
-                user, _ = User.objects.get_or_create(username=f"{service}_{username}")
+            user, _ = User.objects.get_or_create(username=f"{service}_{username}")
 
         social_user = SocialUser.objects.create(username=username, service=service, user=user, sync_token=sync_token)
         NotificationService.objects.get_or_create(user=user, service=service, value=username, is_active=True)
