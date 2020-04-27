@@ -107,7 +107,7 @@ class Command(BaseCommand):
         return event
 
     def get_users(self, tags: List[str]):
-        return User.objects.filter(rules__key__in=tags).all()
+        return User.objects.filter(rules__key__in=tags, is_streaming=True).all()
 
     def get_notifications(self, users):
         qs = NotificationService.objects.filter(
