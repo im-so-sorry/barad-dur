@@ -18,6 +18,9 @@ class ProcessSocialUserMiddleware(MiddlewareMixin):
     def process_request(self, request):
         social_username = request.META.get('HTTP_X_USERNAME')
         social_service = request.META.get('HTTP_X_SERVICE')
+
+        print("Request with headers:", social_username, social_service)
+
         request.social_username = social_username
         request.social_service = social_service
         request.social_user = SimpleLazyObject(lambda: get_user(social_username, social_service))

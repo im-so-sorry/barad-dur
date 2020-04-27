@@ -86,7 +86,11 @@ class SocialUserManager(models.Manager):
 
     def get_or_create_user(self, username: str, service: str, sync_token: Optional[str] = None):
         social_user = SocialUser.objects.filter(username=username, service=service).first()
-        return social_user or self.create_user(username, service, sync_token=sync_token)
+
+        if not social_user:
+            social_user = self.create_user(username, service, sync_token=sync_token)
+
+        return social_user
 
 
 class SocialUser(models.Model):
