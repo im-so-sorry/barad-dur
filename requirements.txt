@@ -15,7 +15,7 @@ minio==5.0.7
 django-filter
 git+git://github.com/philipn/django-rest-framework-filters@master#egg=djangorestframework-filters
 
-celery==4.4.2
+celery==5.2.2
 kombu==4.6.8
 environs==7.3.1
 django-celery-beat==2.0.0
